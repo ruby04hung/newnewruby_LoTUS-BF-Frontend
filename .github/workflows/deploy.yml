@@ -1,18 +1,29 @@
-# .github/workflows/deploy.yml 的一部分
+name: Deploy to GitHub Pages  # 這必須是第 1 行
 
-...
-    - name: Install dependencies
-      run: npm install
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
-    # 【構建步驟開始】 確保這段程式碼的縮排與上面的 - name 和 run 對齊
-    - name: Build project (Fixing Permission)
-      run: |
-        # 1. 查找並修復所有 node_modules/.bin 目錄下的可執行文件權限
-        find node_modules/.bin -type f -exec chmod +x {} \;
-        # 2. 確保 .bin 目錄本身權限正確
-        chmod +x node_modules/.bin
-        # 3. 再次嘗試使用 npx 運行 vite build
-        npx vite build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
     
-    - name: Setup Pages
-...
+# 接下來才是你的 Install dependencies 和 Build project 步驟...
