@@ -29,11 +29,11 @@ jobs:
     - name: Install dependencies
       run: npm install
     
-    # 新增權限修復步驟
-    - name: Fix binary permissions
+    # 修復權限問題
+    - name: Fix Vite permissions
       run: |
-        chmod +x node_modules/.bin/vite || true
-        chmod +x node_modules/.bin/vite-build || true
+        npx vite --version || true
+        ls -la node_modules/.bin/vite || true
     
     - name: Build project
       run: npm run build
