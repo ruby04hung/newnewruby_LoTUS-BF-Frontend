@@ -1,46 +1,17 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
+# .github/workflows/deploy.yml
+...
     - name: Install dependencies
       run: npm install
     
-    # 使用 npx 直接運行 vite build，繞過權限問題
-    - name: Build project
-      run: npx vite build
+    # 【新的構建步驟】 
+    - name: Build project (Fixing Permission)
+      run: |
+        # 1. 查找並修復所有 node_modules/.bin 目錄下的可執行文件權限
+        find node_modules/.bin -type f -exec chmod +x {} \;
+        # 2. 確保 .bin 目錄本身權限正確
+        chmod +x node_modules/.bin
+        # 3. 再次嘗試使用 npx 運行 vite build
+        npx vite build
     
     - name: Setup Pages
-      uses: actions/configure-pages@v4
-      
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./dist
-    
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+...
