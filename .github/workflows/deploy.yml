@@ -29,14 +29,9 @@ jobs:
     - name: Install dependencies
       run: npm install
     
-    # 修復權限問題
-    - name: Fix Vite permissions
-      run: |
-        npx vite --version || true
-        ls -la node_modules/.bin/vite || true
-    
+    # 使用 npx 直接運行 vite build，繞過權限問題
     - name: Build project
-      run: npm run build
+      run: npx vite build
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
